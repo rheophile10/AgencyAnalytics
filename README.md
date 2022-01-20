@@ -1,7 +1,6 @@
 ## Description
 
-Pulls data from the [Agency Analytics API](https://agencyanalytics.com/docs/api/introduction) with a date range of the last 18 months
-
+Pulls data from the [Agency Analytics API](https://agencyanalytics.com/docs/api/introduction) with a date range of the last 13 months
 loads the data to a table in google BigQuery
 
 ## Setup

@@ -1,6 +1,6 @@
 import pytest
 from dotenv import dotenv_values
-from bigquery_writer.bigquery import OurClient
+from bigquery_writer.bigclient import OurClient
 
 @pytest.fixture
 def campaign_data():
@@ -24,28 +24,17 @@ def campaign_data():
   }]
 
 @pytest.fixture
-def keywords_data():
-  return [{
-    "id": 123,
-    "date_created": "2015-03-30 10:06:24",
-    "date_modified": "2015-03-31 9:32:19",
-    "keyword_phrase": "test keyword",
-    "primary_keyword": "false",
-    "campaign_id": 123
-  }]
-
-@pytest.fixture
 def bigquery_client():
   config = dotenv_values(".env") 
-  bigquery_client = OurClient(config['TEST_PROJECT_ID'], 'data')
+  bigquery_client = OurClient(config['TEST_PROJECT_ID'], config['TEST_DATASET_ID'])
+  bigquery_client._initialize_db_from_schemas()
   return bigquery_client
 
 def test_insert_campaigns(bigquery_client, campaign_data):
-  bigquery_client.insert_to_table('campaigns', campaign_data)
-  #select from client
-  #assert that what comes out is what went in
+  test = bigquery_client.insert_campaigns(campaign_data, test=True)
+  bigquery_client.delete_table(bigquery_client.table_id_prefix+'test_campaigns')
+  assert test is None #there will be an error if it doesn't work
 
-def test_insert_keywords(bigquery_client, keywords_data):
-  bigquery_client.insert_to_table('keywords', keywords_data)
-  #select from client
-  #assert that what comes out is what went in
+#def test_insert_keyword_rankings(bigquery_client, keywords_data):
+
+

@@ -28,13 +28,7 @@ class Client:
             self.__dict__[endpoint] = data
 
     def _build_params(self, args):
-        if len(args.keys()) > 0:
-            params = {}
-            for arg in args:
-                if args[arg] is not None:
-                    params[arg] = args[arg]
-        else:
-            params = None
+        params = {k:v for k, v in args.items() if args[k] is not None} if len(args.keys()) > 0 else None
         return params
     
     def get_campaigns_list(self, filter=None, page=None, limit=None, order_by=None, order_direction=None):

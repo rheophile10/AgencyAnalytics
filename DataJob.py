@@ -3,15 +3,17 @@ import requests
 import datetime
 
 # copied in from a project proposal
+# going to use agency_analytics.aa_client instead, except for Google BigQuery
 
 class KeywordsDataPull:
     """ a class we might generalize later if if we were going to do other pulls """
-    def __init__(self, project_id, days_range=365):
+    def __init__(self, project_id, api_key, days_range=365):
         self.end_date = datetime.date.today()
         self.start_date = self.end_date - datetime.timedelta(days = days_range)
         self.client = bigquery.Client(project=project_id)
         self.campaigns = {}
         self.keywords = None
+        self.api_key = api_key
 
     def _write_data(self, write_function, data, context_data):
         """enables self._get_data to use context_data arg"""
@@ -24,9 +26,9 @@ class KeywordsDataPull:
         """a general function to call the client report api"""
         url = "https://api.clientseoreport.com/v3/"+endpoint
         headers = {
-        'Authorization': 'Basic ########'
+            'Authorization': 'Basic {}'.format(self.api_key)
         }
-        response = requests.request("GET", url, params, headers).json()
+        response = requests.request("GET", url, params = params, headers = headers).json()
         pages = response['metadata']['total_pages']
         data = response['data']
         self._write_data(write_function, data, context_data)
@@ -35,7 +37,7 @@ class KeywordsDataPull:
                 params = {'page': page}
             else:
                 params['page'] = page
-            data = requests.request("GET", url, params, headers).json()['data']
+            data = requests.request("GET", url, params = params, headers = headers).json()['data']
         self._write_data(write_function, data, context_data)
     
     def _initialize_bigquery_table(self, tablename, attr):

@@ -1,6 +1,6 @@
 ## Description
 
-Pulls data from the Agency Analytics API with a date range of the last 18 months
+Pulls data from the [Agency Analytics API](https://agencyanalytics.com/docs/api/introduction) with a date range of the last 18 months
 
 loads the data to a table in google BigQuery
 
@@ -13,11 +13,22 @@ This uses python virtual environments and a .env file for client secrets.
 ##### Done
 
 - setup the project
+- write tests for the api
+- write tests for the api client
+  - test that the api client receives response data
+  - test that data coming out of the api meets schema expectations
+
+##### Blockers
+
+- get a pass for api tests 
+   - currently I am receiving HTTP 500 status codes from the api
 
 ##### TODO
 
-- get data back from the api
-- make some tests to make sure all the data coming back meets schema and datatype expectations
+- write tests for the api client
+  - test that the api client receives response data
+  - test that data coming out of the api meets schema expectations
+- get a pass for the api client tests
 - create a table in BigQuery
 - load data to the table in BigQuery
 - make some tests to make sure all the data that came out of the API went into the BigQuery
@@ -27,6 +38,7 @@ This uses python virtual environments and a .env file for client secrets.
 - run the google cloud function
 - schedule the google cloud function
 - check that the google cloud function ran at the scheduled time
+- improve README
 
 
 

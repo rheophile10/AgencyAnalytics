@@ -3,3 +3,6 @@ specs.txt
 .env
 __pycache__
 .pytest_cache
+scripts.py
+main.py
+DataJob.py

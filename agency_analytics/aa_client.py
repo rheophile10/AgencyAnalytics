@@ -1,4 +1,5 @@
 import requests
+import csv
 
 class Client:
     """an API client for Agency Analytics"""
@@ -15,7 +16,7 @@ class Client:
         data = response.json()
         return data['metadata']['total_pages'], data['data']
 
-    def _list_data(self, endpoint, params=None):
+    def _list_data(self, endpoint, params=None, csv=False):
         """operates the list api endpoints and saves results to class attribute"""
         pages, data = self._make_request(endpoint, params)
         self.__dict__[endpoint] = data
@@ -26,6 +27,17 @@ class Client:
                 params['page'] = page
             _, data = self._make_request(endpoint, params)
             self.__dict__[endpoint] = data
+        if csv:
+            self._dump_to_csv(endpoint, data)
+
+    def _dump_to_csv(self, endpoint, data):
+        cols = set()
+        for row in data:
+            cols.add(row.keys()) 
+        with open(f'{endpoint}.csv', 'w', newline='') as output_file:
+            dict_writer = csv.DictWriter(output_file, cols)
+            dict_writer.writeheader()
+            dict_writer.writerows(data)
 
     def _build_params(self, args):
         params = {k:v for k, v in args.items() if args[k] is not None} if len(args.keys()) > 0 else None

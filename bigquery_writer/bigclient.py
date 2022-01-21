@@ -17,7 +17,8 @@ class OurClient(bigquery.Client):
         for view in bigquery_model['views']:
             view_id = self.table_id_prefix + view['name']
             new_view = bigquery.Table(view_id)
-            new_view.view_query = view['sql']
+            params = [self.table_id_prefix + param for param in view['sql']['params']]
+            new_view.view_query = view['sql']['sql'].format(*params)
             self.create_table(new_view, exists_ok=exist_ok)
 
     def _insert_to_table(self, tablename, data):
@@ -30,16 +31,17 @@ class OurClient(bigquery.Client):
     def _format_datetime_to_date(self, date):
         date = datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
         return date.strftime('%Y-%m-%d')
-
-    def _clean_campaign_record(self, campaign_record):       
-        campaign_record = {k:v for k,v in campaign_record.items() if campaign_record[k] is not None}
-        campaign_record['date_created'] = self._format_datetime_to_date(campaign_record['date_created'])
+    
+    def _clean_keyword_ranking_record(self, keyword_ranking_record):       
+        campaign_record = {k:v for k,v in keyword_ranking_record.items() 
+            if keyword_ranking_record[k] is not None}
+        campaign_record['lastResultsDate'] = self._format_datetime_to_date(campaign_record['lastResultsDate'])
         return campaign_record
 
-    def insert_campaigns(self, campaigns_data, test=False):            
-        campaigns_data = [self._clean_campaign_record(datum) for datum in campaigns_data]
+    def insert_keyword_rankings(self, keyword_rankings_data, test=False):            
+        campaigns_data = [self._clean_keyword_ranking_record(datum) for datum in keyword_rankings_data]
         if test:
-            self._insert_to_table('test_campaigns', campaigns_data)
+            self._insert_to_table('test_keyword_rankings', campaigns_data)
         else:
-            self._insert_to_table('campaigns', campaigns_data)
+            self._insert_to_table('keyword_ranking_records', campaigns_data)
 

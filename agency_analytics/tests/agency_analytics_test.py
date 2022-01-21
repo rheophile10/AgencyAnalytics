@@ -52,8 +52,8 @@ def test_write_keywords_list(aa_client, writer, campaign_id):
     aa_client.write_keywords_list(writer.write, campaign_id)
     assert len(writer.data) > 0
 
-def test_write_keyword_rankings_list(aa_client, writer, keyword_rankings_args):
+def test_write_keyword_rankings_list_raw(aa_client, writer, keyword_rankings_args):
     campaign_id, start_date, end_date = keyword_rankings_args
-    aa_client.write_keyword_rankings_list(writer.write, campaign_id=campaign_id, 
+    aa_client.write_keyword_rankings_list_raw(writer.write, campaign_id=campaign_id, 
         start_date=start_date, end_date=end_date, page=1)
     assert len(writer.data) > 0

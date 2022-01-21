@@ -21,31 +21,35 @@ This uses python virtual environments and a .env file for client secrets.
   - created schema and initialize_db method to create a campaigns table
   - created schema and initialize_db method to create a keyword_rankings table
 - get a pass for api tests
+- create a table in BigQuery
+- make a BigQuery Client
+  - that handles keyword ranking 
 
 ##### in progress
 
-- create a table in BigQuery
-  - create a view
-- make a BigQuery Client
-  - that handles keyword ranking 
+- finis write_keyword_rankings_list on aa_client
+- write the google cloud function
+- deploy as a google cloud function
+- run the google cloud function
+- schedule the google cloud function
+- check that the google cloud function ran at the scheduled time
+
+##### TODO (in order of descending priority)
+
+- improve README
+- annotate functions 
+
+
 - make some tests to make sure all the data that came out of the API went into BigQuery
-
-##### TODO
-
 - write tests for the api client
   - test that the api client receives response data
   - test that data coming out of the api meets schema expectations
+
 - get a pass for the api client tests
 - load data to the table in BigQuery
 
 - make a logger 
 - test the logger
-
-- deploy as a google cloud function
-- run the google cloud function
-- schedule the google cloud function
-- check that the google cloud function ran at the scheduled time
-- improve README
 
 
 

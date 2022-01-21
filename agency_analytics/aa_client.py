@@ -95,7 +95,7 @@ class Client:
         params = self._build_params(args)
         self._write_list_data('keywords', write_function, params)
     
-    def write_keyword_rankings_list(self, write_function, campaign_id, start_date, end_date, search=None, page=None, limit=None, 
+    def write_keyword_rankings_list_raw(self, write_function, campaign_id, start_date, end_date, search=None, page=None, limit=None, 
         sort_metric=None, sort_direction=None, compare_previous_method=None):
         """write all keyword rankings https://agencyanalytics.com/docs/api/feeds#list-campaign-rankings-by-keyword"""
         start_date = start_date.strftime('%Y-%m-%d')
@@ -105,3 +105,7 @@ class Client:
             'sort_direction':sort_direction, 'compare_previous_method':compare_previous_method}
         params = self._build_params(args)
         self._write_list_data('resources/rankings/campaign', write_function, params)
+
+    def write_keyword_rankings_list(self, write_function, campaign_id, start_date, end_date, search=None, page=None, limit=None, 
+        sort_metric=None, sort_direction=None, compare_previous_method=None):
+        pass

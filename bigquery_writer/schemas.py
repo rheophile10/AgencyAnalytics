@@ -1,6 +1,11 @@
 from google.cloud import bigquery
 
-campaigns_schema = [
+class DataModel:
+    def __init__(self, project_id, dataset_name):
+        self.project_id = project_id
+        self.dataset_name = dataset_name
+
+campaigns_schema_raw = [
     bigquery.SchemaField('id', 'INTEGER', 'REQUIRED'),
     bigquery.SchemaField('date_created', 'DATE'),
     bigquery.SchemaField('date_modified', 'DATETIME'),
@@ -19,7 +24,7 @@ campaigns_schema = [
     bigquery.SchemaField('account_id', 'INTEGER')
 ]
 
-keywords_schema = [ 
+keywords_schema_raw = [ 
     bigquery.SchemaField('id', 'INTEGER', 'REQUIRED'),
     bigquery.SchemaField('date_created', 'DATETIME'),
     bigquery.SchemaField('date_modified', 'DATETIME'),
@@ -28,7 +33,7 @@ keywords_schema = [
     bigquery.SchemaField('campaign_id', 'INTEGER'),
 ]
 
-city_schema = [ 
+city_schema_raw = [ 
     bigquery.SchemaField('id', 'INTEGER', 'REQUIRED'),
     bigquery.SchemaField('canonical_name', 'STRING'),
     bigquery.SchemaField('country_code', 'STRING'),
@@ -36,17 +41,17 @@ city_schema = [
 
 ]
 
-search_language_schema = [
+search_language_schema_raw = [
     bigquery.SchemaField('id', 'INTEGER', 'REQUIRED'),
     bigquery.SchemaField('name', 'STRING'),
 ]
 
-keyword_rankings_schema = [ 
+keyword_rankings_schema_raw = [ 
     bigquery.SchemaField('keywordId', 'INTEGER', 'REQUIRED'),
     bigquery.SchemaField('keywordPhrase', 'STRING'),
     bigquery.SchemaField('searchLocation_', 'STRING'),
-    bigquery.SchemaField('searchLocation', 'RECORD', fields = city_schema),
-    bigquery.SchemaField('searchLanguage', 'RECORD', fields = search_language_schema),
+    bigquery.SchemaField('searchLocation', 'RECORD', fields = city_schema_raw),
+    bigquery.SchemaField('searchLanguage', 'RECORD', fields = search_language_schema_raw),
     bigquery.SchemaField('primaryKeyword', 'BOOL'),
     bigquery.SchemaField('googleRanking', 'INTEGER'),
     bigquery.SchemaField('googleRankingChange', 'INTEGER'),
@@ -75,12 +80,38 @@ keyword_rankings_schema = [
     bigquery.SchemaField('lastResultsDate', 'DATE')
 ]
 
+keyword_rankings_schema = [
+    bigquery.SchemaField('campaign_id', 'INTEGER', 'REQUIRED'),
+    bigquery.SchemaField('company', 'STRING'),
+    bigquery.SchemaField('keywordId', 'INTEGER', 'REQUIRED'),
+    bigquery.SchemaField('keyword_phrase', 'STRING'),
+    bigquery.SchemaField('googleRanking', 'INTEGER'),
+    bigquery.SchemaField('bingRanking', 'INTEGER'),
+    bigquery.SchemaField('lastResultsDate', 'DATE')
+]
+
 bigquery_model = {
     'tables':
         [
             {
+                'name': 'keyword_rankings',
+                'schema': keyword_rankings_schema
+            },
+            {
+                'name': 'test_keyword_rankings',
+                'schema': keyword_rankings_schema
+            },
+        ],
+    'views': []
+}
+
+
+bigquery_model_with_views = {
+    'tables':
+        [
+            {
                 'name': 'campaigns',
-                'schema': campaigns_schema
+                'schema': campaigns_schema_raw
             },
             {
                 'name': 'rankings',
@@ -88,7 +119,7 @@ bigquery_model = {
             },
             {
                 'name': 'test_campaigns',
-                'schema': campaigns_schema
+                'schema': campaigns_schema_raw
             },
             {
                 'name': 'test_rankings',
@@ -99,20 +130,43 @@ bigquery_model = {
         [
             {
                 'name':'call_tracking_metrics_api',
-                'sql': 
-                    '''
-                    SELECT 
-                        campaign_id
-                        ,company
-                        ,keyword_id
-                        ,keyword_phrase
-                        ,google_ranking
-                        ,bing_ranking
-                        ,date 
-                    FROM
-                    {} ranking
-                    LEFT JOIN {} campaign on ranking.campaign_id = campaign.campaign_id
-                    '''
+                'sql': {
+                        'sql':
+                            '''
+                            SELECT 
+                                campaign_id
+                                ,company
+                                ,keyword_id
+                                ,keyword_phrase
+                                ,google_ranking
+                                ,bing_ranking
+                                ,date 
+                            FROM
+                            {} rankings
+                            LEFT JOIN {} campaigns on rankings.campaign_id = campaign.campaign_id
+                            ''',
+                        'params': ['rankings', 'campaigns']
+                }
+            },
+            {
+                'name':'test_call_tracking_metrics_api',
+                'sql': {
+                        'sql':
+                            '''
+                            SELECT 
+                                campaign_id
+                                ,company
+                                ,keyword_id
+                                ,keyword_phrase
+                                ,google_ranking
+                                ,bing_ranking
+                                ,date 
+                            FROM
+                            {} rankings
+                            LEFT JOIN {} campaigns on rankings.campaign_id = campaigns.campaign_id
+                            ''',
+                        'params': ['test_rankings', 'test_campaigns']
+                }
             }
         ]
 }

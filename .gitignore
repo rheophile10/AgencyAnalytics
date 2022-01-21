@@ -1,8 +1,19 @@
-virtualenv
-specs.txt
+
+#critical passwords and things I don't want to share
 .env
+
+#python junk
 __pycache__
+virtualenv
+
+#pytest junk
 .pytest_cache
-script.py
+
+#data
+*.csv
+
+#scratchpadfiles
 main.py
 DataJob.py
+script.py
+specs.txt

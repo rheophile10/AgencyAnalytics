@@ -20,21 +20,14 @@ This uses python virtual environments and a .env file for client secrets.
 - create a table in BigQuery
   - created schema and initialize_db method to create a campaigns table
   - created schema and initialize_db method to create a keyword_rankings table
-
-
-##### Blocked
-
-- get a pass for api tests 
-   - currently I am receiving HTTP 500 status codes from the api
-- create a table in BigQuery
-  - create a view
-    - I need campaigns data before I can call the keywords ranking api.
-- make a BigQuery Client
-  - that handles keyword ranking - I am need the api to work before I can test that data
-
+- get a pass for api tests
 
 ##### in progress
 
+- create a table in BigQuery
+  - create a view
+- make a BigQuery Client
+  - that handles keyword ranking 
 - make some tests to make sure all the data that came out of the API went into BigQuery
 
 ##### TODO

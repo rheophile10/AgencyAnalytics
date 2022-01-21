@@ -14,15 +14,16 @@ def headers():
 def campaigns(headers):
     endpoint = 'campaigns'
     url = "https://api.clientseoreport.com/v3/"+endpoint
-    params={'limit':10}
+    params={'page':1}
     campaigns = requests.request("GET", url, params = params, headers=headers)
     return campaigns
 
 @pytest.fixture
-def keywords(headers):
+def keywords(headers, campaigns):
+    campaign_id = campaigns.json()['data'][0]['id']
     endpoint = 'keywords'
     url = "https://api.clientseoreport.com/v3/"+endpoint
-    params={'limit':10}
+    params={'campaign_id':campaign_id, 'page':1}
     keywords = requests.request("GET", url, params = params, headers=headers)
     return keywords
 

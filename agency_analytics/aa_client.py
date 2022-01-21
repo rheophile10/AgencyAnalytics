@@ -20,7 +20,7 @@ class Client:
         """operates the list api endpoints and saves results to class attribute"""
         pages, data = self._make_request(endpoint, params)
         self.__dict__[endpoint] = data
-        for page in range(2, pages):
+        for page in range(2, pages+1):
             if params is None: 
                 params = {'page': page}
             else:
@@ -49,6 +49,7 @@ class Client:
         args = {'filter': filter, 'page':page, 'limit':limit, 'order_by': order_by, 'order_direction':order_direction}
         params = self._build_params(args)
         self._list_data('campaigns', params, csv=csv)
+        self.campaigns = self._prune_campaigns_list(self.campaigns)
         return self.campaigns 
 
     def get_keywords_list(self, campaign_id, filter=None, page=None, limit=None, order_by=None, order_direction=None, csv=False):
@@ -75,7 +76,7 @@ class Client:
         """operates the list api endpoints and executes supplied write function"""
         pages, data = self._make_request(endpoint, params)
         write_function(data)
-        for page in range(2, pages):
+        for page in range(2, pages+1):
             if params is None: 
                 params = {'page': page}
             else:
@@ -106,6 +107,49 @@ class Client:
         params = self._build_params(args)
         self._write_list_data('resources/rankings/campaign', write_function, params)
 
-    def write_keyword_rankings_list(self, write_function, campaign_id, start_date, end_date, search=None, page=None, limit=None, 
-        sort_metric=None, sort_direction=None, compare_previous_method=None):
-        pass
+    def _prune_campaigns_list(self, campaigns_list):
+        active_campaigns_list=[]
+        for campaign in campaigns_list:
+            if campaign['status']=='active' and campaign['type']=='real':
+                record = {
+                    'campaign_id': campaign['id'],
+                    'company': campaign['company'],
+                    'status': campaign['status'],
+                }
+                active_campaigns_list.append(record)
+        return active_campaigns_list
+
+    def _make_keyword_rankings_record(self, campaign_record, keywords_ranking_records_list):
+        record_list = []
+        for keyword_record in keywords_ranking_records_list:
+            record = {
+                'campaign_id': campaign_record['campaign_id'],
+                'company': campaign_record['company'],
+                'keywordId': keyword_record['keywordId'],
+                'keyword_phrase': keyword_record['keywordPhrase'],
+                'googleRanking': keyword_record['googleRanking'],
+                'bingRanking': keyword_record['bingRanking'],
+                'lastResultsDate': keyword_record['lastResultsDate']
+            }
+            record_list.append(record)
+        return record_list
+
+    def write_keyword_rankings_list(self, write_function, campaign, start_date, end_date):
+        start_date = start_date.strftime('%Y-%m-%d')
+        end_date = end_date.strftime('%Y-%m-%d')
+        params = {
+            'campaign_id': campaign['campaign_id'],
+            'start_date': start_date, 
+            'end_date': end_date
+        }
+        pages, page_1_data = self._make_request('resources/rankings/campaign', params)
+        page_1_data = self._make_keyword_rankings_record(campaign, page_1_data)
+        write_function(page_1_data)
+        for page in range(2,pages+1): 
+            params['page'] = page
+            _, page_data = self._make_request('resources/rankings/campaign', params)
+            page_data = self._make_keyword_rankings_record(campaign, page_data)
+            write_function(page_data)
+
+
+        

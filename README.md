@@ -1,7 +1,7 @@
 ## Description
 
-Pulls data from the [Agency Analytics API](https://agencyanalytics.com/docs/api/introduction) with a date range of the last 13 months
-loads the data to a table in google BigQuery
+Pulls data from the [Agency Analytics API](https://agencyanalytics.com/docs/api/introduction) with a date range of the last 13 months.
+Loads the data to a table in google BigQuery.
 
 ## Setup
 
@@ -24,11 +24,18 @@ This uses python virtual environments and a .env file for client secrets.
 - create a table in BigQuery
 - make a BigQuery Client
   - that handles keyword ranking 
+- finish write_keyword_rankings_list on aa_client
 
 ##### in progress
 
-- finis write_keyword_rankings_list on aa_client
+- modify bigquery client
+  - drop keywords table
+
 - write the google cloud function
+  - args ( campaigns: list )
+  - first call: fxn( [] )
+  - if len(args.campaigns) == 0, drop keywords table, pull fresh list of active campaigns, if len(campaigns) > 0 call fxn(campaigns)
+  - else if len(args.campaigns) != 0, pop top campaign, get keywords, add to list, if len(campaigns) > 0 call fxn(campaigns)
 - deploy as a google cloud function
 - run the google cloud function
 - schedule the google cloud function

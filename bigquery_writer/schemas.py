@@ -84,7 +84,7 @@ keyword_rankings_schema = [
     bigquery.SchemaField('campaign_id', 'INTEGER', 'REQUIRED'),
     bigquery.SchemaField('company', 'STRING'),
     bigquery.SchemaField('keywordId', 'INTEGER', 'REQUIRED'),
-    bigquery.SchemaField('keyword_phrase', 'STRING'),
+    bigquery.SchemaField('keywordPhrase', 'STRING'),
     bigquery.SchemaField('googleRanking', 'INTEGER'),
     bigquery.SchemaField('bingRanking', 'INTEGER'),
     bigquery.SchemaField('lastResultsDate', 'DATE')

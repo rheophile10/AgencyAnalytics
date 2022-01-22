@@ -18,3 +18,4 @@ def get_keywords(request):
     #logging.debug(f'campaigns_list length after write {len(campaigns_list)}')
     if len(campaigns_list) > 0:
         call_gcloud_fxn(campaigns_list, day_span)
+    return "Done!"

@@ -10,10 +10,10 @@ def keywords_update(campaigns_list, day_span = 390):
     bigquery = OurClient(os.getenv('PROJECT_ID'), os.getenv('DATASET'))
     #aa = Client(config['KEY'])
     aa = Client(os.getenv('KEY'))
-    bigquery._initialize_db_from_schemas(exist_ok=True)
     if campaigns_list == []:
         #first call
         bigquery.wipe_keyword_rankings_table()
+        bigquery._initialize_db_from_schemas(exist_ok=True)
         campaigns_list = aa.get_campaigns_list(active_only=True)
     else:
         #other calls

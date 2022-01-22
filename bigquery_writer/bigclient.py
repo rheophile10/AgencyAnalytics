@@ -39,7 +39,7 @@ class OurClient(bigquery.Client):
         return campaign_record
 
     def wipe_keyword_rankings_table(self):
-        self.query(f'DELETE * from `{self.table_id_prefix}.keyword_rankings`;')
+        self.delete_table(f'{self.table_id_prefix}keyword_rankings', not_found_ok=True)
         
     def insert_keyword_rankings(self, keyword_rankings_data):            
         campaigns_data = [self._clean_keyword_ranking_record(datum) for datum in keyword_rankings_data]

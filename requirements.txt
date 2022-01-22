@@ -2,4 +2,4 @@ google-cloud-bigquery==2.32.0
 pytest==6.2.5
 python-dotenv==0.19.2
 requests==2.27.1
-
+google-cloud-logging==2.7.0

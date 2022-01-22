@@ -27,7 +27,7 @@ def keywords_update(campaigns_list, day_span = 390):
 
 def call_gcloud_fxn(campaigns_list, day_span):
     new_request_json = {'campaigns_list': campaigns_list, 'day_span': day_span}
-    url = 'fxn url'
+    url = os.getenv('FXN_URL')
     requests.post(url, data=new_request_json)
 
 def wipe_yesterday_data():

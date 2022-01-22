@@ -19,6 +19,15 @@ FXN_URL='the url of the google function this code is deployed to'
 
 This google cloud function calls itself and must be permssioned to do so. You can see how to do that [here](https://cloud.google.com/functions/docs/securing/authenticating) 
 
+## Testing in Google Cloud Console
+
+a helfpul test body for this google cloud function is
+
+```
+{"campaigns_list":[], "day_span":365}
+```
+
+
 ### Development
 
 ##### Done

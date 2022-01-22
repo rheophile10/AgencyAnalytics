@@ -4,6 +4,8 @@ from agency_analytics.aa_client import Client
 from datetime import datetime, timedelta
 import requests
 import os
+import google.auth.transport.requests
+import google.oauth2.id_token
 
 def keywords_update(campaigns_list, day_span = 390):
     #config = dotenv_values(".env") 
@@ -28,7 +30,10 @@ def keywords_update(campaigns_list, day_span = 390):
 def call_gcloud_fxn(campaigns_list, day_span):
     new_request_json = {'campaigns_list': campaigns_list, 'day_span': day_span}
     url = os.getenv('FXN_URL')
-    response = requests.post(url, data=new_request_json)
+    auth_req = google.auth.transport.requests.Request()
+    id_token = google.oauth2.id_token.fetch_id_token(auth_req, url)
+    header = {'Authorization': f'Bearer {id_token}'}
+    response = requests.post(url, data=new_request_json, headers=header)
     return f'new request status code: {response.status_code} and {len(campaigns_list)} campaigns to go'
 
 def wipe_yesterday_data():

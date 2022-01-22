@@ -1,6 +1,6 @@
 from gcloud_fxns import keywords_update, call_gcloud_fxn
-import google.cloud.logging
-import logging
+#import google.cloud.logging
+#import logging
 
 def get_keywords(request):
     """Updates keywords table in bigquery

@@ -14,7 +14,10 @@ This uses python virtual environments and a .env file for client secrets. Google
 KEY='the agency analytics api key'
 PROJECT_ID='the google project id'
 DATASET='the Bigquery dataset with the table we're writing records to'
+FXN_URL='the url of the google function this code is deployed to'
 ```
+
+This google cloud function calls itself and must be permssioned to do so. You can see how to do that [here](https://cloud.google.com/functions/docs/securing/authenticating) 
 
 ### Development
 

@@ -17,5 +17,6 @@ def get_keywords(request):
     campaigns_list = keywords_update(campaigns_list, day_span)
     #logging.debug(f'campaigns_list length after write {len(campaigns_list)}')
     if len(campaigns_list) > 0:
-        call_gcloud_fxn(campaigns_list, day_span)
-    return len(campaigns_list)
+        return call_gcloud_fxn(campaigns_list, day_span)
+    else:
+        return f'finished: campaigns_list length {len(campaigns_list)}'

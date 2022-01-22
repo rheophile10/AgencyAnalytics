@@ -38,10 +38,11 @@ class OurClient(bigquery.Client):
         campaign_record['lastResultsDate'] = self._format_datetime_to_date(campaign_record['lastResultsDate'])
         return campaign_record
 
-    def insert_keyword_rankings(self, keyword_rankings_data, test=False):            
+    def wipe_keyword_rankings_table(self):
+        self.query(f'DELETE * from `{self.table_id_prefix}.keyword_rankings`;')
+        
+    def insert_keyword_rankings(self, keyword_rankings_data):            
         campaigns_data = [self._clean_keyword_ranking_record(datum) for datum in keyword_rankings_data]
-        if test:
-            self._insert_to_table('test_keyword_rankings', campaigns_data)
-        else:
-            self._insert_to_table('keyword_ranking_records', campaigns_data)
+        if len(campaigns_data) > 0:
+            self._insert_to_table('keyword_rankings', campaigns_data)
 

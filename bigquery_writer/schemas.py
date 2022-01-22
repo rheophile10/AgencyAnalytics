@@ -97,10 +97,6 @@ bigquery_model = {
                 'name': 'keyword_rankings',
                 'schema': keyword_rankings_schema
             },
-            {
-                'name': 'test_keyword_rankings',
-                'schema': keyword_rankings_schema
-            },
         ],
     'views': []
 }

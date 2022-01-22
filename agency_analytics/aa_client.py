@@ -44,12 +44,13 @@ class Client:
         params = {k:v for k, v in args.items() if args[k] is not None} if len(args.keys()) > 0 else None
         return params
     
-    def get_campaigns_list(self, filter=None, page=None, limit=None, order_by=None, order_direction=None, csv=False):
+    def get_campaigns_list(self, filter=None, page=None, limit=None, order_by=None, order_direction=None, csv=False, active_only = False):
         """list all campaigns https://agencyanalytics.com/docs/api/campaigns#list-all-campaigns"""
         args = {'filter': filter, 'page':page, 'limit':limit, 'order_by': order_by, 'order_direction':order_direction}
         params = self._build_params(args)
         self._list_data('campaigns', params, csv=csv)
-        self.campaigns = self._prune_campaigns_list(self.campaigns)
+        if active_only: 
+            self.campaigns = self._prune_campaigns_list(self.campaigns)
         return self.campaigns 
 
     def get_keywords_list(self, campaign_id, filter=None, page=None, limit=None, order_by=None, order_direction=None, csv=False):

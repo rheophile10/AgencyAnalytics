@@ -13,7 +13,6 @@ virtualenv
 *.csv
 
 #scratchpadfiles
-main.py
 DataJob.py
 script.py
 specs.txt

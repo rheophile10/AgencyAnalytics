@@ -3,9 +3,19 @@
 Pulls data from the [Agency Analytics API](https://agencyanalytics.com/docs/api/introduction) with a date range of the last 13 months.
 Loads the data to a table in google BigQuery.
 
+branch pubsub is for a scheduled google cloud function
+branch main is for the main cloud function
+
+(the only difference is which file is named "main")
+
 ## Setup
 
-This uses python virtual environments and a .env file for client secrets. 
+This uses python virtual environments and a .env file for client secrets. Google Cloud functions must have the following environment variables
+```
+KEY='the agency analytics api key'
+PROJECT_ID='the google project id'
+DATASET='the Bigquery dataset with the table we're writing records to'
+```
 
 ### Development
 
@@ -25,17 +35,16 @@ This uses python virtual environments and a .env file for client secrets.
 - make a BigQuery Client
   - that handles keyword ranking 
 - finish write_keyword_rankings_list on aa_client
-
-##### in progress
-
 - modify bigquery client
   - drop keywords table
-
 - write the google cloud function
   - args ( campaigns: list )
   - first call: fxn( [] )
   - if len(args.campaigns) == 0, drop keywords table, pull fresh list of active campaigns, if len(campaigns) > 0 call fxn(campaigns)
   - else if len(args.campaigns) != 0, pop top campaign, get keywords, add to list, if len(campaigns) > 0 call fxn(campaigns)
+
+##### in progress
+
 - deploy as a google cloud function
 - run the google cloud function
 - schedule the google cloud function
@@ -45,7 +54,6 @@ This uses python virtual environments and a .env file for client secrets.
 
 - improve README
 - annotate functions 
-
 
 - make some tests to make sure all the data that came out of the API went into BigQuery
 - write tests for the api client

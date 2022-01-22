@@ -120,17 +120,18 @@ class Client:
                 active_campaigns_list.append(record)
         return active_campaigns_list
 
-    def _make_keyword_rankings_record(self, campaign_record, keywords_ranking_records_list):
+    def _make_keyword_rankings_record(self, campaign_record, keywords_ranking_records_list, params):
         record_list = []
         for keyword_record in keywords_ranking_records_list:
             record = {
                 'campaign_id': campaign_record['campaign_id'],
                 'company': campaign_record['company'],
                 'keywordId': keyword_record['keywordId'],
-                'keyword_phrase': keyword_record['keywordPhrase'],
+                'keywordPhrase': keyword_record['keywordPhrase'],
                 'googleRanking': keyword_record['googleRanking'],
                 'bingRanking': keyword_record['bingRanking'],
-                'lastResultsDate': keyword_record['lastResultsDate']
+                'lastResultsDate': keyword_record['lastResultsDate'],
+                'insertDate': params['end_date']
             }
             record_list.append(record)
         return record_list
@@ -144,13 +145,15 @@ class Client:
             'end_date': end_date
         }
         pages, page_1_data = self._make_request('resources/rankings/campaign', params)
-        page_1_data = self._make_keyword_rankings_record(campaign, page_1_data)
-        write_function(page_1_data)
+        page_1_data = self._make_keyword_rankings_record(campaign, page_1_data, params)
+        results = write_function(page_1_data)
+        print(results)
         for page in range(2,pages+1): 
             params['page'] = page
             _, page_data = self._make_request('resources/rankings/campaign', params)
-            page_data = self._make_keyword_rankings_record(campaign, page_data)
-            write_function(page_data)
+            page_data = self._make_keyword_rankings_record(campaign, page_data, params)
+            results = write_function(page_data)
+            print(results)
 
 
         

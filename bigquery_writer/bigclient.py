@@ -8,7 +8,7 @@ class OurClient(bigquery.Client):
         self.dataset_name = dataset_name
         self.table_id_prefix = '{}.{}.'.format(project_id, self.dataset_name)
 
-    def _initialize_db_from_schemas(self, exist_ok=False):
+    def _initialize_db_from_schemas(self, exist_ok=True):
         """initializes the database from scratch"""
         for table in bigquery_model['tables']:
             table_id = self.table_id_prefix + table['name']
@@ -39,10 +39,13 @@ class OurClient(bigquery.Client):
         return campaign_record
 
     def wipe_keyword_rankings_table(self):
-        self.delete_table(f'{self.table_id_prefix}keyword_rankings', not_found_ok=True)
+        self.delete_table(f'{self.table_id_prefix}rankings', not_found_ok=True)
         
     def insert_keyword_rankings(self, keyword_rankings_data):            
         campaigns_data = [self._clean_keyword_ranking_record(datum) for datum in keyword_rankings_data]
         if len(campaigns_data) > 0:
-            self._insert_to_table('keyword_rankings', campaigns_data)
+            return self._insert_to_table('rankings', campaigns_data)
 
+    def delete_keyword_rankings_with_date(self, date):
+        query = f'DELETE FROM {self.table_id_prefix}rankings WHERE insertDate = \'{date}\''
+        return self.query(query).result()

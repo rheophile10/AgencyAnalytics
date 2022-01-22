@@ -87,14 +87,15 @@ keyword_rankings_schema = [
     bigquery.SchemaField('keywordPhrase', 'STRING'),
     bigquery.SchemaField('googleRanking', 'INTEGER'),
     bigquery.SchemaField('bingRanking', 'INTEGER'),
-    bigquery.SchemaField('lastResultsDate', 'DATE')
+    bigquery.SchemaField('lastResultsDate', 'DATE'),
+    bigquery.SchemaField('insertDate', 'DATE')
 ]
 
 bigquery_model = {
     'tables':
         [
             {
-                'name': 'keyword_rankings',
+                'name': 'rankings',
                 'schema': keyword_rankings_schema
             },
         ],

@@ -12,8 +12,8 @@ def keywords_update(campaigns_list, day_span = 390):
     aa = Client(os.getenv('KEY'))
     if campaigns_list == []:
         #first call
-        bigquery.wipe_keyword_rankings_table()
-        bigquery._initialize_db_from_schemas(exist_ok=True)
+        #bigquery.wipe_keyword_rankings_table()
+        #bigquery._initialize_db_from_schemas(exist_ok=True)
         campaigns_list = aa.get_campaigns_list(active_only=True)
     else:
         #other calls
@@ -27,3 +27,9 @@ def call_gcloud_fxn(campaigns_list, day_span):
     new_request_json = {'campaigns_list': campaigns_list, 'day_span': day_span}
     url = 'fxn url'
     requests.post(url, data=new_request_json)
+
+def wipe_yesterday_data():
+    yesterday = datetime.today() - timedelta(days = 1)
+    yesterday = yesterday.strftime('%Y-%m-%d')
+    bigquery = OurClient(os.getenv('PROJECT_ID'), os.getenv('DATASET'))
+    bigquery.delete_keyword_rankings_with_date(yesterday)

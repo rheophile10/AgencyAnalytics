@@ -14,7 +14,9 @@ def keywords_update(campaigns_list, day_span = 390):
         #first call
         #bigquery.wipe_keyword_rankings_table()
         #bigquery._initialize_db_from_schemas(exist_ok=True)
+        wipe_yesterday_data()
         campaigns_list = aa.get_campaigns_list(active_only=True)
+        call_gcloud_fxn(campaigns_list, 365)
     else:
         #other calls
         campaign = campaigns_list.pop()

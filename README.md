@@ -3,10 +3,7 @@
 Pulls data from the [Agency Analytics API](https://agencyanalytics.com/docs/api/introduction) with a date range of the last 13 months.
 Loads the data to a table in google BigQuery.
 
-Pubsub makes the first google cloud function call. After that each subsequent funciton call receives a list of campaigns in the arguments, pops one off the top, gets keywords for that campaign and inserts them to bigquery and then passes the reduced list of campaigns to the cloud function and does this recursively until there are no campaigns left. 
-
-branch pubsub is for a scheduled google cloud function
-branch main is for the main cloud function
+The first call is made with an empty list. Yesterdays data is wiped and a fresh list of campaigns is gotten from the agency analytics api. After that each subsequent funciton call receives the list of campaigns in the arguments, pops one off the top, gets keywords for that campaign and inserts them to bigquery and then passes the reduced list of campaigns to the cloud function and does this recursively until there are no campaigns left. 
 
 (the only difference is which file is named "main")
 

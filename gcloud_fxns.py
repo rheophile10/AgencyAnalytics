@@ -34,8 +34,12 @@ def call_gcloud_fxn(campaigns_list, day_span):
     auth_req = google.auth.transport.requests.Request()
     id_token = google.oauth2.id_token.fetch_id_token(auth_req, url)
     headers = {'Authorization': f'Bearer {id_token}', "Content-Type": "application/json"}
-    response = requests.post(url, data=new_request_json, headers=headers)
-    return f'new request status code: {response.status_code} and {len(campaigns_list)} campaigns to go'
+    try:
+        requests.post(url, data=new_request_json, headers=headers, timeout=0.0000000001)
+    except requests.exceptions.ReadTimeout: 
+        pass
+    #response = requests.post(url, data=new_request_json, headers=headers)
+    return f'{len(campaigns_list)} campaigns to go'
 
 def wipe_yesterday_data():
     yesterday = datetime.today() - timedelta(days = 1)

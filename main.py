@@ -14,7 +14,6 @@ def write_keywords(campaign, day_span, aa_client, bigquery_client):
     start_date = end_date - timedelta(days = day_span)
     return aa_client.write_keyword_rankings_list(bigquery_client.insert_keyword_rankings,campaign, start_date, end_date)
     
-
 async def call_gcloud_fxn(campaigns_list, day_span):
     new_request_json = json.dumps({'campaigns_list': campaigns_list, 'day_span': day_span})
     url = os.getenv('FXN_URL')

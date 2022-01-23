@@ -40,7 +40,8 @@ def get_keywords(request):
     if campaigns_list == []:
         wipe_yesterday_data()
         campaigns_list = aa.get_campaigns_list(active_only=True)
-        loop = asyncio.get_event_loop()
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
         tasks = [loop.create_task(call_gcloud_fxn([campaign], day_span)) for campaign in campaigns_list]
         loop.run_until_complete(asyncio.wait(tasks))
         loop.close()

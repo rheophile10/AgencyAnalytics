@@ -147,13 +147,11 @@ class Client:
         pages, page_1_data = self._make_request('resources/rankings/campaign', params)
         page_1_data = self._make_keyword_rankings_record(campaign, page_1_data, params)
         results = write_function(page_1_data)
-        print(results)
         for page in range(2,pages+1): 
             params['page'] = page
             _, page_data = self._make_request('resources/rankings/campaign', params)
             page_data = self._make_keyword_rankings_record(campaign, page_data, params)
             results = write_function(page_data)
-            print(results)
-
+        return f'wrote {pages} of data'
 
         

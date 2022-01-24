@@ -3,9 +3,7 @@
 Pulls data from the [Agency Analytics API](https://agencyanalytics.com/docs/api/introduction) with a date range of the last 13 months.
 Loads the data to a table in google BigQuery.
 
-The first call is made with an empty list. Yesterdays data is wiped and a fresh list of campaigns is gotten from the agency analytics api. After that each subsequent funciton call receives the list of campaigns in the arguments, pops one off the top, gets keywords for that campaign and inserts them to bigquery and then passes the reduced list of campaigns to the cloud function and does this recursively until there are no campaigns left. 
-
-(the only difference is which file is named "main")
+Uses Pubsub
 
 ## Setup
 
@@ -14,17 +12,15 @@ This uses python virtual environments and a .env file for client secrets. Google
 KEY='the agency analytics api key'
 PROJECT_ID='the google project id'
 DATASET='the Bigquery dataset with the table we're writing records to'
-FXN_URL='the url of the google function this code is deployed to'
+TOPIC_NAME='the topic name of the project'
 ```
-
-This google cloud function calls itself and must be permssioned to do so. You can see how to do that [here](https://cloud.google.com/functions/docs/securing/authenticating) 
 
 ## Testing in Google Cloud Console
 
 a helfpul test body for this google cloud function is
 
 ```
-{"campaigns_list":[], "day_span":365}
+{"data":"c3RhcnQ="}
 ```
 
 
@@ -53,18 +49,17 @@ a helfpul test body for this google cloud function is
   - first call: fxn( [] )
   - if len(args.campaigns) == 0, drop keywords table, pull fresh list of active campaigns, if len(campaigns) > 0 call fxn(campaigns)
   - else if len(args.campaigns) != 0, pop top campaign, get keywords, add to list, if len(campaigns) > 0 call fxn(campaigns)
-
-##### in progress
-
 - deploy as a google cloud function
 - run the google cloud function
 - schedule the google cloud function
+
+
+##### in progress
 - check that the google cloud function ran at the scheduled time
-
-##### TODO (in order of descending priority)
-
 - improve README
 - annotate functions 
+
+##### TODO (in order of descending priority)
 
 - make some tests to make sure all the data that came out of the API went into BigQuery
 - write tests for the api client
@@ -74,8 +69,7 @@ a helfpul test body for this google cloud function is
 - get a pass for the api client tests
 - load data to the table in BigQuery
 
-- make a logger 
-- test the logger
+- improve logger
 
 
 

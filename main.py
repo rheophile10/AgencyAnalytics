@@ -8,6 +8,7 @@ import os
 import google.auth.transport.requests
 import google.oauth2.id_token
 import json
+from google.cloud import pubsub_v1
 
 def write_keywords(campaign, day_span, aa_client, bigquery_client):
     end_date = datetime.today()
@@ -21,7 +22,7 @@ async def call_gcloud_fxn(campaigns_list, day_span):
     id_token = google.oauth2.id_token.fetch_id_token(auth_req, url)
     headers = {'Authorization': f'Bearer {id_token}', "Content-Type": "application/json"}
     response = requests.post(url, data=new_request_json, headers=headers)
-    return response.status_code
+    await response.status_code
 
 def wipe_yesterday_data():
     yesterday = datetime.today() - timedelta(days = 1)

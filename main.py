@@ -74,7 +74,7 @@ def get_keywords(event, context):
         return f'campaign_id not in {data.keys()}'
     elif isint(data['data']['campaign_id']):
         logging.warning(f'campaign data: {data}')
-        write_result = write_keywords(data, day_span, aa, bigquery)
+        write_result = write_keywords(data['data'], day_span, aa, bigquery)
         logging.warning(f'write result: {write_result}')
     else: 
         logging.error(f'Unexpected Error: {data} is not an integer or start')

@@ -9,6 +9,8 @@ import base64
 import logging
 import google.cloud.logging
 
+client = google.cloud.logging.Client()
+client.setup_logging()
 
 
 def write_keywords(campaign, day_span, aa_client, bigquery_client):
@@ -52,12 +54,15 @@ def get_keywords(event, context):
          event (dict): Event payload.
          context (google.cloud.functions.Context): Metadata for the event.
     """
-    client = google.cloud.logging.Client()
-    client.setup_logging()
+
     data = base64.b64decode(event['data']).decode('utf-8')
     bigquery = OurClient(os.getenv('PROJECT_ID'), os.getenv('DATASET'))
     aa = Client(os.getenv('KEY'))
     data = data if data == 'start' else json.loads(data)
+    try: 
+        data['campaign_id']
+    except KeyError as e:
+        print(data)
     logging.debug(f'data = {data}')
     day_span = 365
     if data == 'start':

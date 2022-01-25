@@ -45,6 +45,8 @@ class OurClient(bigquery.Client):
         campaigns_data = [self._clean_keyword_ranking_record(datum) for datum in keyword_rankings_data]
         if len(campaigns_data) > 0:
             return self._insert_to_table('rankings', campaigns_data)
+        else:
+            return 'there were no campaign keywords to insert!'
 
     def delete_keyword_rankings_with_date(self, date):
         query = f'DELETE FROM {self.table_id_prefix}rankings WHERE insertDate = \'{date}\''

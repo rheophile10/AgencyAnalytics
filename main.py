@@ -6,6 +6,10 @@ import os
 import json
 from google.cloud import pubsub_v1
 import base64
+import logging
+import google.cloud.logging
+
+
 
 def write_keywords(campaign, day_span, aa_client, bigquery_client):
     end_date = datetime.today()
@@ -16,7 +20,8 @@ def wipe_yesterday_data():
     yesterday = datetime.today() - timedelta(days = 1)
     yesterday = yesterday.strftime('%Y-%m-%d')
     bigquery = OurClient(os.getenv('PROJECT_ID'), os.getenv('DATASET'))
-    bigquery.delete_keyword_rankings_with_date(yesterday)
+    return bigquery.delete_keyword_rankings_with_date(yesterday)
+    
 
 def publish_campaign(campaign):
     publisher = pubsub_v1.PublisherClient()
@@ -48,18 +53,26 @@ def get_keywords(event, context):
          event (dict): Event payload.
          context (google.cloud.functions.Context): Metadata for the event.
     """
+    client = google.cloud.logging.Client()
+    client.setup_logging()
     data = base64.b64decode(event['data']).decode('utf-8')
     bigquery = OurClient(os.getenv('PROJECT_ID'), os.getenv('DATASET'))
     aa = Client(os.getenv('KEY'))
     day_span = 365
     if data == 'start':
-        wipe_yesterday_data()
+        logging.debug(f'start data: {data}')
+        wipe_result = wipe_yesterday_data()
+        logging.debug(f'wipe_result: {wipe_result}')
         campaigns_list = aa.get_campaigns_list(active_only=True)
+        logging.debug(f'campaigns to publish: {len(campaigns_list)}')
         for campaign in campaigns_list:
             publish_campaign(campaign)
     elif isint(data):
-        write_keywords(data, day_span, aa, bigquery)
+        logging.debug(f'campaign data: {data}')
+        write_result = write_keywords(data, day_span, aa, bigquery)
+        logging.debug(f'write result: {write_result}')
     else: 
+        logging.error(f'Unexpected Error: {data} is not an integer or start')
         return f'Unexpected Error. data: {data}'
 
 

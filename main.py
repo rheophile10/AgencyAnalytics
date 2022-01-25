@@ -22,7 +22,6 @@ def wipe_yesterday_data():
     bigquery = OurClient(os.getenv('PROJECT_ID'), os.getenv('DATASET'))
     return bigquery.delete_keyword_rankings_with_date(yesterday)
     
-
 def publish_campaign(campaign):
     publisher = pubsub_v1.PublisherClient()
     PROJECT_ID = os.getenv('PROJECT_ID')
@@ -67,7 +66,7 @@ def get_keywords(event, context):
         logging.debug(f'campaigns to publish: {len(campaigns_list)}')
         for campaign in campaigns_list:
             publish_campaign(campaign)
-    elif isint(data):
+    elif isint(data['campaign_id']):
         logging.debug(f'campaign data: {data}')
         write_result = write_keywords(data, day_span, aa, bigquery)
         logging.debug(f'write result: {write_result}')

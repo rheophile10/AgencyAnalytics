@@ -59,22 +59,23 @@ def get_keywords(event, context):
     bigquery = OurClient(os.getenv('PROJECT_ID'), os.getenv('DATASET'))
     aa = Client(os.getenv('KEY'))
     data = data if data == 'start' else json.loads(data)
-    logging.debug(f'data = {data}')
+    logging.warning(f'data = {data}')
     day_span = 365
     if data == 'start':
-        logging.debug(f'start data: {data}')
+        logging.warning(f'start data: {data}')
         wipe_result = wipe_yesterday_data()
-        logging.debug(f'wipe_result: {wipe_result}')
+        logging.warning(f'wipe_result: {wipe_result}')
         campaigns_list = aa.get_campaigns_list(active_only=True)
-        logging.debug(f'campaigns to publish: {len(campaigns_list)}')
+        logging.warning(f'campaigns to publish: {len(campaigns_list)}')
         for campaign in campaigns_list:
             publish_campaign(campaign)
     elif 'campaign_id' not in data.keys():
+        logging.error(f'campaign_id not in {data.keys()}')
         return f'campaign_id not in {data.keys()}'
     elif isint(data['campaign_id']):
-        logging.debug(f'campaign data: {data}')
+        logging.warning(f'campaign data: {data}')
         write_result = write_keywords(data, day_span, aa, bigquery)
-        logging.debug(f'write result: {write_result}')
+        logging.warning(f'write result: {write_result}')
     else: 
         logging.error(f'Unexpected Error: {data} is not an integer or start')
         return f'Unexpected Error. data: {data}'

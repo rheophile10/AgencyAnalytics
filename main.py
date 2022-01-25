@@ -59,10 +59,6 @@ def get_keywords(event, context):
     bigquery = OurClient(os.getenv('PROJECT_ID'), os.getenv('DATASET'))
     aa = Client(os.getenv('KEY'))
     data = data if data == 'start' else json.loads(data)
-    try: 
-        data['campaign_id']
-    except KeyError as e:
-        print(data)
     logging.debug(f'data = {data}')
     day_span = 365
     if data == 'start':
@@ -73,6 +69,8 @@ def get_keywords(event, context):
         logging.debug(f'campaigns to publish: {len(campaigns_list)}')
         for campaign in campaigns_list:
             publish_campaign(campaign)
+    elif 'campaign_id' not in data.keys():
+        return f'campaign_id not in {data.keys()}'
     elif isint(data['campaign_id']):
         logging.debug(f'campaign data: {data}')
         write_result = write_keywords(data, day_span, aa, bigquery)

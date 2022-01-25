@@ -69,10 +69,10 @@ def get_keywords(event, context):
         logging.warning(f'campaigns to publish: {len(campaigns_list)}')
         for campaign in campaigns_list:
             publish_campaign(campaign)
-    elif 'campaign_id' not in data.keys():
+    elif 'campaign_id' not in data['data'].keys():
         logging.error(f'campaign_id not in {data.keys()}')
         return f'campaign_id not in {data.keys()}'
-    elif isint(data['campaign_id']):
+    elif isint(data['data']['campaign_id']):
         logging.warning(f'campaign data: {data}')
         write_result = write_keywords(data, day_span, aa, bigquery)
         logging.warning(f'write result: {write_result}')

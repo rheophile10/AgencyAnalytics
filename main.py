@@ -58,6 +58,7 @@ def get_keywords(event, context):
     bigquery = OurClient(os.getenv('PROJECT_ID'), os.getenv('DATASET'))
     aa = Client(os.getenv('KEY'))
     data = data if data == 'start' else json.loads(data)
+    logging.debug(f'data = {data}')
     day_span = 365
     if data == 'start':
         logging.debug(f'start data: {data}')

@@ -16,3 +16,6 @@ virtualenv
 DataJob.py
 script.py
 specs.txt
+
+credentials.json
+

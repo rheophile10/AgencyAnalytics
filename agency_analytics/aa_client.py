@@ -19,16 +19,17 @@ class Client:
     def _list_data(self, endpoint, params=None, csv=False):
         """operates the list api endpoints and saves results to class attribute"""
         pages, data = self._make_request(endpoint, params)
-        self.__dict__[endpoint] = data
+        self.__dict__[endpoint.replace('/','_')] = data
         for page in range(2, pages+1):
             if params is None: 
                 params = {'page': page}
             else:
                 params['page'] = page
             _, data = self._make_request(endpoint, params)
-            self.__dict__[endpoint.replace('/','_')] = data
+            self.__dict__[endpoint.replace('/','_')] += data
         if csv:
             self._dump_to_csv(endpoint, data)
+        return self.__dict__[endpoint.replace('/','_')]
 
     def _dump_to_csv(self, endpoint, data):
         cols = set()
@@ -154,5 +155,19 @@ class Client:
             page_data = self._make_keyword_rankings_record(campaign, page_data, params)
             results.append(write_function(page_data))
         return f'wrote {pages} of data with results: {results}'
+
+    def get_keyword_rankings_by_date(self, keyword_id, start_date, end_date, search=None, page=None, limit=None, 
+        sort_metric=None, sort_direction=None, compare_previous_method=None):
+        """list all keyword rankings by date https://agencyanalytics.com/docs/api/feeds#list-keyword-rankings-by-date"""
+        start_date = start_date.strftime('%Y-%m-%d')
+        end_date = end_date.strftime('%Y-%m-%d')
+        args = {'keyword_id':keyword_id, 'start_date':start_date, 'end_date':end_date, 
+            'search':search, 'page':page, 'limit':limit, 'sort_metric':sort_metric, 
+            'sort_direction':sort_direction, 'compare_previous_method':compare_previous_method}
+        params = self._build_params(args)
+        endpoint = 'resources/rankings/keyword/date'
+        return self._list_data(endpoint, params)
+        
+
 
         

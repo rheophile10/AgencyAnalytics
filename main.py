@@ -1,6 +1,6 @@
 from bigquery_writer.bigclient import OurClient
 #from dotenv import dotenv_values
-from agency_analytics.aa_client import Client
+from agency_analytics.client.old_client import AgencyAnalytics
 from datetime import datetime, timedelta
 import os
 import json
@@ -13,7 +13,7 @@ client = google.cloud.logging.Client()
 client.setup_logging()
 
 
-def write_keywords(campaign, day_span, aa_client, bigquery_client):
+def write_keywords(campaign, day_span, aa_client: AgencyAnalytics, bigquery_client):
     end_date = datetime.today()
     start_date = end_date - timedelta(days = day_span)
     return aa_client.write_keyword_rankings_list(bigquery_client.insert_keyword_rankings,campaign, start_date, end_date)
@@ -57,7 +57,7 @@ def get_keywords(event, context):
 
     data = base64.b64decode(event['data']).decode('utf-8')
     bigquery = OurClient(os.getenv('PROJECT_ID'), os.getenv('DATASET'))
-    aa = Client(os.getenv('KEY'))
+    aa = AgencyAnalytics(os.getenv('KEY'))
     data = data if data == 'start' else json.loads(data)
     logging.warning(f'data = {data}')
     day_span = 365

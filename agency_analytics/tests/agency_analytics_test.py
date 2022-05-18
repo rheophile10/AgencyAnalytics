@@ -1,6 +1,6 @@
 import pytest
 from dotenv import dotenv_values
-from agency_analytics.aa_client import Client
+from agency_analytics import AgencyAnalytics
 from datetime import datetime, timedelta
 
 class Writer:
@@ -12,7 +12,7 @@ class Writer:
 @pytest.fixture
 def aa_client():
     config = dotenv_values(".env") 
-    aa_client = Client(config['KEY'])
+    aa_client = AgencyAnalytics(config['KEY'])
     return aa_client
 
 def test_get_campaigns_list(aa_client):

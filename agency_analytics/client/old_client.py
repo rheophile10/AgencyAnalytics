@@ -1,12 +1,16 @@
+from datetime import datetime
 import requests
 import csv
+from typing import Dict, Any, Callable
+import logging
 
-class Client:
+class AgencyAnalytics:
     """an API client for Agency Analytics"""
-    def __init__(self, api_key):
+    def __init__(self, api_key:str)->None:
         self.api_key = api_key
 
-    def _make_request(self, endpoint, params):
+    def _make_request(self, endpoint:str, params:Dict[str,Any]):
+        """it makes a request of the agency analytics endpoint"""
         url = "https://api.clientseoreport.com/v3/"+endpoint
         headers = {
             'Authorization': 'Basic {}'.format(self.api_key)
@@ -14,7 +18,9 @@ class Client:
         response = requests.request("GET", url, params = params, headers = headers)
         response.raise_for_status()
         data = response.json()
-        return data['metadata']['total_pages'], data['data']
+        total_pages = data['metadata']['total_pages']
+        data = data['data']
+        return total_pages, data 
 
     def _list_data(self, endpoint, params=None, csv=False):
         """operates the list api endpoints and saves results to class attribute"""
@@ -137,25 +143,6 @@ class Client:
             record_list.append(record)
         return record_list
 
-    def write_keyword_rankings_list(self, write_function, campaign, start_date, end_date):
-        start_date = start_date.strftime('%Y-%m-%d')
-        end_date = end_date.strftime('%Y-%m-%d')
-        params = {
-            'campaign_id': campaign['campaign_id'],
-            'start_date': start_date, 
-            'end_date': end_date
-        }
-        pages, page_1_data = self._make_request('resources/rankings/campaign', params)
-        page_1_data = self._make_keyword_rankings_record(campaign, page_1_data, params)
-        results = []
-        results.append(write_function(page_1_data))
-        for page in range(2,pages+1): 
-            params['page'] = page
-            _, page_data = self._make_request('resources/rankings/campaign', params)
-            page_data = self._make_keyword_rankings_record(campaign, page_data, params)
-            results.append(write_function(page_data))
-        return f'wrote {pages} of data with results: {results}'
-
     def get_keyword_rankings_by_date(self, keyword_id, start_date, end_date, search=None, page=None, limit=None, 
         sort_metric=None, sort_direction=None, compare_previous_method=None):
         """list all keyword rankings by date https://agencyanalytics.com/docs/api/feeds#list-keyword-rankings-by-date"""
@@ -168,6 +155,28 @@ class Client:
         endpoint = 'resources/rankings/keyword/date'
         return self._list_data(endpoint, params)
         
+    def write_keyword_rankings_list(self, write_function: Callable, campaign, 
+        start_date: datetime, end_date:datetime) -> None:
+        """writes the the ranking"""
+        start_date = start_date.strftime('%Y-%m-%d')
+        end_date = end_date.strftime('%Y-%m-%d')
+        params = {
+            'campaign_id': campaign['campaign_id'],
+            'start_date': start_date, 
+            'end_date': end_date, 
+            'page': 1
+        }
+        pages, page_1_data = self._make_request('resources/rankings/campaign', params)
+        page_1_data = self._make_keyword_rankings_record(campaign, page_1_data, params)
+        results = []
+        results.append(write_function(page_1_data))
+        for page in range(2,pages+1): 
+            params['page'] = page
+            _, page_data = self._make_request('resources/rankings/campaign', params)
+            page_data = self._make_keyword_rankings_record(campaign, page_data, params)
+            results.append(write_function(page_data))
+        logging.warning(f'write result: wrote {pages} of data with results: {results}')
+
 
 
         
